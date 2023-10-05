@@ -5,11 +5,18 @@ import java.util.ArrayList;
 class ReturnPiece {
 	static enum PieceType {WP, WR, WN, WB, WQ, WK, 
 		            BP, BR, BN, BB, BK, BQ};
-	static enum PieceFile {a, b, c, d, e, f, g, h};
-	
+	static enum PieceFile {a, b, c, d, e, f, g, h};	
 	PieceType pieceType;
 	PieceFile pieceFile;
 	int pieceRank;  // 1..8
+
+	public ReturnPiece(PieceType pieceType, PieceFile pieceFile, int pieceRank)
+	{
+		this.pieceType = pieceType;
+		this.pieceFile = pieceFile;	
+		this.pieceRank = pieceRank;
+	}
+
 	public String toString() {
 		return ""+pieceFile+pieceRank+":"+pieceType;
 	}
@@ -23,6 +30,7 @@ class ReturnPiece {
 				pieceRank == otherPiece.pieceRank;
 	}
 }
+
 
 class ReturnPlay {
 	enum Message {ILLEGAL_MOVE, DRAW, 
