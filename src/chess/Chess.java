@@ -59,14 +59,78 @@ public class Chess {
 	 *         the contents of the returned ReturnPlay instance.
 	 */
 	public static ReturnPlay play(String move) {
+        String[] moveParts = move.split(" ");
+        if (moveParts.length != 2) {
+            // Invalid move format
+            game.message = ReturnPlay.Message.ILLEGAL_MOVE;
+            return game;
+        }
 
-		/* FILL IN THIS METHOD */
-		
-		/* FOLLOWING LINE IS A PLACEHOLDER TO MAKE COMPILER HAPPY */
-		/* WHEN YOU FILL IN THIS METHOD, YOU NEED TO RETURN A ReturnPlay OBJECT */
-		return game;
+        // Parse the source and destination squares
+        String source = moveParts[0];
+        String destination = moveParts[1];
+
+        PieceFile oldFile = PieceFile.valueOf(source.substring(0, 1));
+        int oldRank = Integer.parseInt(source.substring(1, 2));
+        PieceFile newFile = PieceFile.valueOf(destination.substring(0, 1));
+        int newRank = Integer.parseInt(destination.substring(1, 2));
+
+        ReturnPiece returnPiece = getPieceAt(oldFile, oldRank);
+        if (returnPiece == null) {
+            // No piece at the specified position
+            game.message = ReturnPlay.Message.ILLEGAL_MOVE;
+            return game;
+        }
+
+        Piece piece = mapToDerivedPiece(returnPiece);
+        if (piece == null) {
+            // Unknown piece type
+            game.message = ReturnPlay.Message.ILLEGAL_MOVE;
+            return game;
+        }
+
+        if (piece.isLegalMove(oldFile.ordinal(), oldRank, newFile.ordinal(), newRank, game.piecesOnBoard)) {
+            piece.move(newFile.ordinal(), newRank);
+            updateGameState();
+        } else {
+            game.message = ReturnPlay.Message.ILLEGAL_MOVE;
+        }
+
+        return game;
+	}
+
+	private static Piece mapToDerivedPiece(ReturnPiece returnPiece) {
+		switch (returnPiece.pieceType) {
+			case WB: case BB:
+				return (Bishop) returnPiece;
+			case WN: case BN:
+				return (Knight) returnPiece;
+			case WR: case BR:
+				return (Rook) returnPiece;
+			case WQ: case BQ:
+				return (Queen) returnPiece;
+			case WK: case BK:
+				return (King) returnPiece;
+			case WP: case BP:
+				return (Pawn) returnPiece;
+			default:
+				return null;
+		}
 	}
 	
+
+	private static void updateGameState() {
+        // Implement game state update logic here, e.g., checking for check or checkmate
+    }
+
+	private static ReturnPiece getPieceAt(PieceFile file, int rank) {
+        for (ReturnPiece piece : game.piecesOnBoard) {
+            if (piece.pieceFile == file && piece.pieceRank == rank) {
+                return piece;
+            }
+        }
+        return null;
+    }
 	
 	/**
 	 * This method should reset the game, and start from scratch.

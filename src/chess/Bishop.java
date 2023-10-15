@@ -1,6 +1,8 @@
 package chess;
 
-public class Bishop extends ReturnPiece {
+import java.util.ArrayList;
+
+public class Bishop extends ReturnPiece implements Piece{
 
     public Bishop(PieceType pieceType, PieceFile pieceFile, int pieceRank) {
         this.pieceType = pieceType;
@@ -8,28 +10,46 @@ public class Bishop extends ReturnPiece {
         this.pieceRank = pieceRank;
     }
 
-    public boolean isLegalMove(int oldX, int oldY, int newX, int newY, Board board) {
+    public boolean isLegalMove(int oldX, int oldY, int newX, int newY, ArrayList<ReturnPiece> piecesOnBoard) {
+        // Ensure the move is along a diagonal
         if (Math.abs(oldX - newX) != Math.abs(oldY - newY)) {
             return false;
         }
 
-        int xDirection = (newX > oldX) ? 1 : -1;
-        int yDirection = (newY > oldY) ? 1 : -1;
-        int steps = Math.abs(newX - oldX);
+        int stepX = (newX > oldX) ? 1 : -1;
+        int stepY = (newY > oldY) ? 1 : -1;
 
-        for (int i = 1; i < steps; i++) {
-            int x = oldX + i * xDirection;
-            int y = oldY + i * yDirection;
-            if (!board.isSpotEmpty(x, y) || board.isSameColor(x, y, this.isWhite())) {
+        // Check for any pieces blocking the path
+        for (int x = oldX + stepX, y = oldY + stepY; x != newX || y != newY; x += stepX, y += stepY) {
+            if (getPieceAt(x, y, piecesOnBoard) != null) {
                 return false;
             }
         }
 
-        if (!board.isSpotEmpty(newX, newY) && board.isSameColor(newX, newY, this.isWhite())) {
+        // Check if the destination spot is occupied by a piece of the same color
+        if (isSameColor(oldX, oldY, newX, newY, piecesOnBoard)) {
             return false;
         }
 
         return true;
+    }
+
+    private boolean isSameColor(int oldX, int oldY, int newX, int newY, ArrayList<ReturnPiece> piecesOnBoard) {
+        ReturnPiece oldPiece = getPieceAt(oldX, oldY, piecesOnBoard);
+        ReturnPiece newPiece = getPieceAt(newX, newY, piecesOnBoard);
+        if (oldPiece != null && newPiece != null) {
+            return oldPiece.pieceType.toString().charAt(0) == newPiece.pieceType.toString().charAt(0);
+        }
+        return false;
+    }
+
+    private ReturnPiece getPieceAt(int x, int y, ArrayList<ReturnPiece> piecesOnBoard) {
+        for (ReturnPiece piece : piecesOnBoard) {
+            if (piece.pieceFile.ordinal() == x && piece.pieceRank == y + 1) {
+                return piece;
+            }
+        }
+        return null;
     }
 
     public void move(int newX, int newY) {
@@ -37,7 +57,7 @@ public class Bishop extends ReturnPiece {
         this.pieceRank = newY + 1;
     }
 
-    public boolean isWhite(){
+    public boolean isWhite() {
         return this.pieceType.toString().charAt(0) == 'W';
     }
 

@@ -1,6 +1,7 @@
 package chess;
 
-import java.util.ArrayList;
+
+
 
 public class Board {
     
@@ -14,6 +15,15 @@ public class Board {
     // Method to check if a particular spot on the board is empty
     public boolean isSpotEmpty(int x, int y) {
         return board[x][y] == null;
+    }
+
+    public ReturnPiece getPieceAt(int x, int y) {
+        for (ReturnPiece piece : Chess.game.piecesOnBoard) {
+            if (piece.pieceFile.ordinal() == x && piece.pieceRank == y + 1) {
+                return piece;
+            }
+        }
+        return null;  // return null if no piece found at the specified location
     }
 
     // Method to check if two pieces are of the same color

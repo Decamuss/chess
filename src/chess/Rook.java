@@ -1,6 +1,8 @@
 package chess;
 
-public class Rook extends ReturnPiece {
+import java.util.ArrayList;
+
+public class Rook extends ReturnPiece implements Piece{
 
     public Rook(PieceType pieceType, PieceFile pieceFile, int pieceRank) {
         this.pieceType = pieceType;
@@ -8,21 +10,60 @@ public class Rook extends ReturnPiece {
         this.pieceRank = pieceRank;
     }
 
-    public boolean isLegalMove(int oldX, int oldY, int newX, int newY, Board board) {
+    public boolean isLegalMove(int oldX, int oldY, int newX, int newY, ArrayList<ReturnPiece> piecesOnBoard) {
+        // Check if the move is along a straight line
         if (oldX != newX && oldY != newY) {
-            return false;  // Rook can only move in a straight line
+            return false;
         }
 
-        int stepX = (newX > oldX) ? 1 : (newX < oldX) ? -1 : 0;
-        int stepY = (newY > oldY) ? 1 : (newY < oldY) ? -1 : 0;
+        // Determine the direction of the move
+        int xDirection = (newX > oldX) ? 1 : (newX < oldX) ? -1 : 0;
+        int yDirection = (newY > oldY) ? 1 : (newY < oldY) ? -1 : 0;
 
-        for (int x = oldX + stepX, y = oldY + stepY; x != newX || y != newY; x += stepX, y += stepY) {
-            if (!board.isSpotEmpty(x, y) || board.isSameColor(x, y, this.isWhite())) {
+        // Check for any pieces blocking the path
+        int x = oldX + xDirection;
+        int y = oldY + yDirection;
+        while (x != newX || y != newY) {
+            if (!isSpotEmpty(x, y, piecesOnBoard) || isSameColor(oldX, oldY, x, y, piecesOnBoard)) {
+                return false;
+            }
+            x += xDirection;
+            y += yDirection;
+        }
+
+        // Check if the destination spot is empty or contains an opponent's piece
+        if (!isSpotEmpty(newX, newY, piecesOnBoard) || isSameColor(oldX, oldY, newX, newY, piecesOnBoard)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean isSpotEmpty(int x, int y, ArrayList<ReturnPiece> piecesOnBoard) {
+        for (ReturnPiece piece : piecesOnBoard) {
+            if (piece.pieceFile.ordinal() == x && piece.pieceRank == y + 1) {
                 return false;
             }
         }
+        return true;
+    }
 
-        return !board.isSameColor(newX, newY, this.isWhite());
+    private boolean isSameColor(int oldX, int oldY, int newX, int newY, ArrayList<ReturnPiece> piecesOnBoard) {
+        ReturnPiece oldPiece = getPieceAt(oldX, oldY, piecesOnBoard);
+        ReturnPiece newPiece = getPieceAt(newX, newY, piecesOnBoard);
+        if (oldPiece != null && newPiece != null) {
+            return oldPiece.pieceType.toString().charAt(0) == newPiece.pieceType.toString().charAt(0);
+        }
+        return false;
+    }
+
+    private ReturnPiece getPieceAt(int x, int y, ArrayList<ReturnPiece> piecesOnBoard) {
+        for (ReturnPiece piece : piecesOnBoard) {
+            if (piece.pieceFile.ordinal() == x && piece.pieceRank == y + 1) {
+                return piece;
+            }
+        }
+        return null;
     }
 
     public void move(int newX, int newY) {

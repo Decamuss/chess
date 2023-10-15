@@ -1,6 +1,8 @@
 package chess;
 
-public class Queen extends ReturnPiece {
+import java.util.ArrayList;
+
+public class Queen extends ReturnPiece implements Piece{
 
     public Queen(PieceType pieceType, PieceFile pieceFile, int pieceRank) {
         this.pieceType = pieceType;
@@ -8,7 +10,7 @@ public class Queen extends ReturnPiece {
         this.pieceRank = pieceRank;
     }
 
-    public boolean isLegalMove(int oldX, int oldY, int newX, int newY, Board board) {
+    public boolean isLegalMove(int oldX, int oldY, int newX, int newY, ArrayList<ReturnPiece> piecesOnBoard) {
         boolean isRookMove = (oldX == newX || oldY == newY);
         boolean isBishopMove = (Math.abs(oldX - newX) == Math.abs(oldY - newY));
         if (!isRookMove && !isBishopMove) {
@@ -19,12 +21,39 @@ public class Queen extends ReturnPiece {
         int stepY = (newY > oldY) ? 1 : (newY < oldY) ? -1 : 0;
 
         for (int x = oldX + stepX, y = oldY + stepY; x != newX || y != newY; x += stepX, y += stepY) {
-            if (!board.isSpotEmpty(x, y) || board.isSameColor(x, y, this.isWhite())) {
+            if (!isSpotEmpty(x, y, piecesOnBoard) || isSameColor(oldX, oldY, x, y, piecesOnBoard)) {
                 return false;
             }
         }
 
-        return !board.isSameColor(newX, newY, this.isWhite());
+        return !isSameColor(oldX, oldY, newX, newY, piecesOnBoard);
+    }
+
+    private boolean isSpotEmpty(int x, int y, ArrayList<ReturnPiece> piecesOnBoard) {
+        for (ReturnPiece piece : piecesOnBoard) {
+            if (piece.pieceFile.ordinal() == x && piece.pieceRank == y + 1) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isSameColor(int oldX, int oldY, int newX, int newY, ArrayList<ReturnPiece> piecesOnBoard) {
+        ReturnPiece oldPiece = getPieceAt(oldX, oldY, piecesOnBoard);
+        ReturnPiece newPiece = getPieceAt(newX, newY, piecesOnBoard);
+        if (oldPiece != null && newPiece != null) {
+            return oldPiece.pieceType.toString().charAt(0) == newPiece.pieceType.toString().charAt(0);
+        }
+        return false;
+    }
+
+    private ReturnPiece getPieceAt(int x, int y, ArrayList<ReturnPiece> piecesOnBoard) {
+        for (ReturnPiece piece : piecesOnBoard) {
+            if (piece.pieceFile.ordinal() == x && piece.pieceRank == y + 1) {
+                return piece;
+            }
+        }
+        return null;
     }
 
     public void move(int newX, int newY) {

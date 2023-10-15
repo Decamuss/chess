@@ -1,27 +1,55 @@
 package chess;
 
-public class Knight extends ReturnPiece {
+import java.util.ArrayList;
+
+public class Knight extends ReturnPiece implements Piece{
 
     public Knight(PieceType pieceType, PieceFile pieceFile, int pieceRank) {
-        this.pieceType = pieceType;  // Assume PieceType.BN for black knight or PieceType.WN for white knight
-        this.pieceFile = pieceFile;  // Assume PieceFile.a through PieceFile.h
-        this.pieceRank = pieceRank;  // Assume 1 through 8
+        this.pieceType = pieceType;
+        this.pieceFile = pieceFile;
+        this.pieceRank = pieceRank;
     }
 
-    public boolean isLegalMove(int oldX, int oldY, int newX, int newY, Board board) {
-        int xDiff = Math.abs(oldX - newX);
-        int yDiff = Math.abs(oldY - newY);
-        boolean isMoveLShape = (xDiff == 2 && yDiff == 1) || (xDiff == 1 && yDiff == 2);
-
-        if (!isMoveLShape) {
+    public boolean isLegalMove(int oldX, int oldY, int newX, int newY, ArrayList<ReturnPiece> piecesOnBoard) {
+        // Check if the move forms an L-shape (two squares in one direction and one square in the perpendicular direction)
+        if (!((Math.abs(oldX - newX) == 2 && Math.abs(oldY - newY) == 1) ||
+              (Math.abs(oldX - newX) == 1 && Math.abs(oldY - newY) == 2))) {
             return false;
         }
 
-        if (!board.isSpotEmpty(newX, newY) && board.isSameColor(newX, newY, this.isWhite())) {
+        // Check if the destination spot is empty or contains an opponent's piece
+        if (!isSpotEmpty(newX, newY, piecesOnBoard) || isSameColor(oldX, oldY, newX, newY, piecesOnBoard)) {
             return false;
         }
 
         return true;
+    }
+
+    private boolean isSpotEmpty(int x, int y, ArrayList<ReturnPiece> piecesOnBoard) {
+        for (ReturnPiece piece : piecesOnBoard) {
+            if (piece.pieceFile.ordinal() == x && piece.pieceRank == y + 1) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isSameColor(int oldX, int oldY, int newX, int newY, ArrayList<ReturnPiece> piecesOnBoard) {
+        ReturnPiece oldPiece = getPieceAt(oldX, oldY, piecesOnBoard);
+        ReturnPiece newPiece = getPieceAt(newX, newY, piecesOnBoard);
+        if (oldPiece != null && newPiece != null) {
+            return oldPiece.pieceType.toString().charAt(0) == newPiece.pieceType.toString().charAt(0);
+        }
+        return false;
+    }
+
+    private ReturnPiece getPieceAt(int x, int y, ArrayList<ReturnPiece> piecesOnBoard) {
+        for (ReturnPiece piece : piecesOnBoard) {
+            if (piece.pieceFile.ordinal() == x && piece.pieceRank == y + 1) {
+                return piece;
+            }
+        }
+        return null;
     }
 
     public void move(int newX, int newY) {
@@ -29,7 +57,7 @@ public class Knight extends ReturnPiece {
         this.pieceRank = newY + 1;
     }
 
-    public boolean isWhite(){
+    public boolean isWhite() {
         return this.pieceType.toString().charAt(0) == 'W';
     }
 
