@@ -6,15 +6,11 @@ package chess;
 
 public class Rook extends ReturnPiece {
     
-    public Rook(PieceFile pieceFile, int pieceRank)
+    public Rook(PieceType pieceType, PieceFile pieceFile, int pieceRank)
         {
-           if((pieceFile == PieceFile.a|| pieceFile == PieceFile.h) && (pieceRank == 1))
-           {
-            this.pieceType = PieceType.WR;
-           }
-           if((pieceFile == PieceFile.a|| pieceFile == PieceFile.h) && (pieceRank == 1)){
-            this.pieceType = PieceType.BR;
-           }
+            this.pieceType = pieceType;  // Assume PieceType.BB for black bishop or PieceType.WB for white bishop
+            this.pieceFile = pieceFile;  // Assume PieceFile.a through PieceFile.h
+            this.pieceRank = pieceRank;  // Assume 1 through 8
         }        
 
 }

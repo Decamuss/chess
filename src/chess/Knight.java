@@ -2,15 +2,10 @@ package chess;
 
 
 public class Knight extends ReturnPiece {
-    public Knight(PieceFile pieceFile, int pieceRank)
+    public Knight(PieceType pieceType, PieceFile pieceFile, int pieceRank)
     {
-       if((pieceFile == PieceFile.b|| pieceFile == PieceFile.g) && (pieceRank == 1))
-       {
-        this.pieceType = PieceType.WN;
-       }
-       if((pieceFile == PieceFile.b|| pieceFile == PieceFile.g) && (pieceRank == 8))
-       {
-        this.pieceType = PieceType.BN;
-       }
+        this.pieceType = pieceType;  // Assume PieceType.BB for black bishop or PieceType.WB for white bishop
+        this.pieceFile = pieceFile;  // Assume PieceFile.a through PieceFile.h
+        this.pieceRank = pieceRank;  // Assume 1 through 8
     }
 }

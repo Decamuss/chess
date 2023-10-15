@@ -1,15 +1,10 @@
 package chess;
 
 public class Queen extends ReturnPiece {
-    public Queen(PieceFile pieceFile, int pieceRank)
+    public Queen(PieceType pieceType, PieceFile pieceFile, int pieceRank)
     {
-       if((pieceFile == PieceFile.d) && (pieceRank == 1))
-       {
-        this.pieceType = PieceType.WQ;
-       }
-       if((pieceFile == PieceFile.d) && (pieceRank == 8))
-       {
-        this.pieceType = PieceType.BQ;
-       }
+        this.pieceType = pieceType;  // Assume PieceType.BB for black bishop or PieceType.WB for white bishop
+        this.pieceFile = pieceFile;  // Assume PieceFile.a through PieceFile.h
+        this.pieceRank = pieceRank;  // Assume 1 through 8
     }
 }
