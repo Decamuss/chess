@@ -11,6 +11,9 @@ public class Pawn extends ReturnPiece implements Piece{
     }
 
     public boolean isLegalMove(int oldX, int oldY, int newX, int newY, ArrayList<ReturnPiece> piecesOnBoard) {
+
+        oldY -=1;
+        newY -=1;
         int direction = (this.pieceType.toString().charAt(0) == 'W') ? 1 : -1;  // White pawns move up, black pawns move down
         
         // Check for standard one-step forward move
@@ -56,7 +59,7 @@ public class Pawn extends ReturnPiece implements Piece{
 
     public void move(int newX, int newY) {
         this.pieceFile = PieceFile.values()[newX];
-        this.pieceRank = newY + 1;
+        this.pieceRank = newY;
     }
 
     @Override

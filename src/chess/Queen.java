@@ -11,6 +11,8 @@ public class Queen extends ReturnPiece implements Piece{
     }
 
     public boolean isLegalMove(int oldX, int oldY, int newX, int newY, ArrayList<ReturnPiece> piecesOnBoard) {
+        oldY -=1;
+        newY -=1;
         boolean isRookMove = (oldX == newX || oldY == newY);
         boolean isBishopMove = (Math.abs(oldX - newX) == Math.abs(oldY - newY));
         if (!isRookMove && !isBishopMove) {
@@ -58,7 +60,7 @@ public class Queen extends ReturnPiece implements Piece{
 
     public void move(int newX, int newY) {
         this.pieceFile = PieceFile.values()[newX];
-        this.pieceRank = newY + 1;
+        this.pieceRank = newY;
     }
 
     public boolean isWhite() {

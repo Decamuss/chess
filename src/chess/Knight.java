@@ -12,6 +12,8 @@ public class Knight extends ReturnPiece implements Piece{
 
     public boolean isLegalMove(int oldX, int oldY, int newX, int newY, ArrayList<ReturnPiece> piecesOnBoard) {
         // Check if the move forms an L-shape (two squares in one direction and one square in the perpendicular direction)
+        oldY -=1;
+        newY -=1;
         if (!((Math.abs(oldX - newX) == 2 && Math.abs(oldY - newY) == 1) ||
               (Math.abs(oldX - newX) == 1 && Math.abs(oldY - newY) == 2))) {
             return false;
@@ -54,7 +56,7 @@ public class Knight extends ReturnPiece implements Piece{
 
     public void move(int newX, int newY) {
         this.pieceFile = PieceFile.values()[newX];
-        this.pieceRank = newY + 1;
+        this.pieceRank = newY;
     }
 
     public boolean isWhite() {

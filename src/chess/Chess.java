@@ -59,6 +59,7 @@ public class Chess {
 	 *         the contents of the returned ReturnPlay instance.
 	 */
 	public static ReturnPlay play(String move) {
+		game.message = null;
         String[] moveParts = move.split(" ");
         if (moveParts.length != 2) {
             // Invalid move format

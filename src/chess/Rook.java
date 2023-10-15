@@ -12,6 +12,9 @@ public class Rook extends ReturnPiece implements Piece{
 
     public boolean isLegalMove(int oldX, int oldY, int newX, int newY, ArrayList<ReturnPiece> piecesOnBoard) {
         // Check if the move is along a straight line
+
+        oldY -=1;
+        newY -=1;
         if (oldX != newX && oldY != newY) {
             return false;
         }
@@ -31,11 +34,16 @@ public class Rook extends ReturnPiece implements Piece{
             y += yDirection;
         }
 
-        // Check if the destination spot is empty or contains an opponent's piece
-        if (!isSpotEmpty(newX, newY, piecesOnBoard) || isSameColor(oldX, oldY, newX, newY, piecesOnBoard)) {
+        if (!isSpotEmpty(newX, newY, piecesOnBoard)) {
+            if (!isSameColor(oldX, oldY, newX, newY, piecesOnBoard)) {
+                // Capture opponent's piece
+                ReturnPiece capturedPiece = getPieceAt(newX, newY, piecesOnBoard);
+                piecesOnBoard.remove(capturedPiece);
+                return true;
+            }
             return false;
         }
-
+        
         return true;
     }
 
@@ -68,7 +76,7 @@ public class Rook extends ReturnPiece implements Piece{
 
     public void move(int newX, int newY) {
         this.pieceFile = PieceFile.values()[newX];
-        this.pieceRank = newY + 1;
+        this.pieceRank = newY;
     }
 
     public boolean isWhite() {

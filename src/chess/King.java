@@ -12,6 +12,8 @@ public class King extends ReturnPiece implements Piece {
 
     public boolean isLegalMove(int oldX, int oldY, int newX, int newY, ArrayList<ReturnPiece> piecesOnBoard) {
         // Check if the move is a single step in any direction
+        oldY -=1;
+        newY -=1;
         if (Math.abs(oldX - newX) > 1 || Math.abs(oldY - newY) > 1) {
             return false;
         }
@@ -53,7 +55,7 @@ public class King extends ReturnPiece implements Piece {
 
     public void move(int newX, int newY) {
         this.pieceFile = PieceFile.values()[newX];
-        this.pieceRank = newY + 1;
+        this.pieceRank = newY;
     }
 
     public boolean isWhite() {

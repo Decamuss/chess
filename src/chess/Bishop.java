@@ -15,12 +15,16 @@ public class Bishop extends ReturnPiece implements Piece{
         if (Math.abs(oldX - newX) != Math.abs(oldY - newY)) {
             return false;
         }
-
+        oldY -=1;
+        newY -=1;
+        int stepCount = Math.abs(oldX - newX);  // or Math.abs(oldY - newY) since they should be the same
         int stepX = (newX > oldX) ? 1 : -1;
         int stepY = (newY > oldY) ? 1 : -1;
-
+    
         // Check for any pieces blocking the path
-        for (int x = oldX + stepX, y = oldY + stepY; x != newX || y != newY; x += stepX, y += stepY) {
+        for (int i = 1; i < stepCount; i++) {
+            int x = oldX + i * stepX;
+            int y = oldY + i * stepY;
             if (getPieceAt(x, y, piecesOnBoard) != null) {
                 return false;
             }
@@ -54,7 +58,7 @@ public class Bishop extends ReturnPiece implements Piece{
 
     public void move(int newX, int newY) {
         this.pieceFile = PieceFile.values()[newX];
-        this.pieceRank = newY + 1;
+        this.pieceRank = newY;
     }
 
     public boolean isWhite() {
