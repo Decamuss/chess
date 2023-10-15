@@ -30,7 +30,7 @@ public class Bishop extends ReturnPiece {
         }
 
         // Check if the destination spot is empty or contains an opponent's piece
-        if (!board.isSpotEmpty(newX, newY) && board.isSameColor(newX, newY, this.isWhite())) {
+        if (!board.isSpotEmpty(newX, newY) || board.isSameColor(newX, newY, this.isWhite())) {
             return false;
         }
 
@@ -40,6 +40,10 @@ public class Bishop extends ReturnPiece {
     public void move(int newX, int newY) {
         this.pieceFile = PieceFile.values()[newX];
         this.pieceRank = newY + 1;
+    }
+
+    public boolean isWhite(){
+        return this.pieceType.toString().charAt(0) == 'W';
     }
 
     @Override

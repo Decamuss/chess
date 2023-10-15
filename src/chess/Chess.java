@@ -6,6 +6,7 @@ import java.util.List;
 
 //need to import for some reason to get the pieces to construct
 import chess.ReturnPiece.PieceFile;
+import chess.ReturnPiece.PieceType;
 
 class ReturnPiece {
 	static enum PieceType {WP, WR, WN, WB, WQ, WK, 
@@ -86,10 +87,10 @@ public class Chess {
 		Knight blackKnight1 = new Knight(PieceFile.b, 8);
 		Knight blackKnight2 = new Knight(PieceFile.g, 8);
 
-		Bishop whiteBishop1 = new Bishop(PieceFile.c, 1);
-		Bishop whiteBishop2 = new Bishop(PieceFile.f, 1);
-		Bishop blackBishop1 = new Bishop(PieceFile.c, 8);
-		Bishop blackBishop2 = new Bishop(PieceFile.f, 8);
+		Bishop whiteBishop1 = new Bishop(PieceType.WB, PieceFile.c, 1);
+		Bishop whiteBishop2 = new Bishop(PieceType.WB, PieceFile.f, 1);
+		Bishop blackBishop1 = new Bishop(PieceType.WB, PieceFile.c, 8);
+		Bishop blackBishop2 = new Bishop(PieceType.WB, PieceFile.f, 8);
 
 		Queen whiteQueen = new Queen(PieceFile.d, 1);
 		Queen blackQueen = new Queen(PieceFile.d, 8);

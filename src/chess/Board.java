@@ -1,59 +1,56 @@
 package chess;
 
 import java.util.ArrayList;
-import java.util.List;
-
-class Piece {
-    String type;  // e.g., "Pawn", "Rook", "Knight", etc.
-    String color; // "white" or "black"
-    int x, y;     // Position on the board
-
-    List<String> getPossibleMoves() {
-        List<String> moves = new ArrayList<>();
-        // ... logic to generate possible moves based on the type of piece and its position ...
-        return moves;
-    }
-}
 
 public class Board {
-    Piece[][] board = new Piece[8][8];  // 8x8 board
+    
+    private ReturnPiece[][] board;  // 2D array to represent the board
 
-    boolean executeMove(String move) {
-        // Parse the move string to get the starting and ending positions
-        String[] parts = move.split(" ");
-        int startX = parts[0].charAt(0) - 'a';
-        int startY = parts[0].charAt(1) - '1';
-        int endX = parts[1].charAt(0) - 'a';
-        int endY = parts[1].charAt(1) - '1';
+    public Board() {
+        board = new ReturnPiece[8][8];
+        // Initial board setup can be done here or in a separate method
+    }
 
-        // Get the piece at the starting position
-        Piece piece = board[startX][startY];
-        if (piece == null) {
-            System.out.println("No piece at the starting position.");
-            return false;
-        }
+    // Method to check if a particular spot on the board is empty
+    public boolean isSpotEmpty(int x, int y) {
+        return board[x][y] == null;
+    }
 
-        // Check if the move is legal
-        if (!isMoveLegal(piece, endX, endY)) {
-            System.out.println("Illegal move.");
-            return false;
+    // Method to check if two pieces are of the same color
+    public boolean isSameColor(int x, int y, boolean isWhite) {
+        // Assuming there's a method in ReturnPiece class to get the color
+        return isWhite == this.isWhite(board[x][y]);
+    }
+
+    public boolean isWhite(ReturnPiece piece){
+        return piece.pieceType.toString().charAt(0) == 'W';
+    }
+
+    // Method to execute a move
+    public boolean executeMove(int oldX, int oldY, int newX, int newY) {
+        // Validate the move (e.g., check boundaries, check if move is legal for the piece, etc.)
+        if (!isValidMove(oldX, oldY, newX, newY)) {
+            return false;  // Move is not valid
         }
 
         // Execute the move
-        board[endX][endY] = piece;
-        board[startX][startY] = null;
-        piece.x = endX;
-        piece.y = endY;
+        board[newX][newY] = board[oldX][oldY];
+        board[oldX][oldY] = null;
+
+        return true;  // Move executed successfully
+    }
+
+    // Sample method to validate a move, this would be more complex in a real implementation
+    public boolean isValidMove(int oldX, int oldY, int newX, int newY) {
+        // Check board boundaries
+        if (newX < 0 || newX >= 8 || newY < 0 || newY >= 8) {
+            return false;
+        }
+
+        // More validations can be added here...
+        
         return true;
     }
 
-    boolean isMoveLegal(Piece piece, int endX, int endY) {
-        // Placeholder
-        return true;
-    }
-
-    void setupBoard() {
-        // Placeholder: Set up the initial position of pieces on the board.
-        // This would involve creating Piece objects and placing them in the correct positions in the board array.
-    }
+    // Other methods like displaying the board, checking the game status, etc.
 }
