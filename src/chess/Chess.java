@@ -98,28 +98,6 @@ public class Chess {
 		}
 		return game;
 
-
-        // if (moveParts.length < 2) {
-        //     // Invalid move format	
-        //     game.message = ReturnPlay.Message.ILLEGAL_MOVE;
-        //     return game;		
-        // }
-
-
-		//checks to see if there is a request made by the player, and outputs the corresponding response based on said request 
-		// if(request.equalsIgnoreCase("draw")){
-		// 	 game.message = ReturnPlay.Message.DRAW;
-		// }
-		// else if(request.equalsIgnoreCase("resign"))
-		// {
-		// 	if(playerToMove == Player.white){
-		// 		game.message = ReturnPlay.Message.RESIGN_BLACK_WINS;
-		// 	}
-		// 	else{
-		// 		game.message = ReturnPlay.Message.RESIGN_WHITE_WINS;
-		// 	}
-		// }
-
        
 	}
 
@@ -195,24 +173,24 @@ public class Chess {
 			}
 		}  
 
-		else if (piece.getType() == ReturnPiece.PieceType.BP)
+		else if (piece.getType() == ReturnPiece.PieceType.BP && newRank ==1)
 		{
 			String promotionPiece = moveParts.length<3 ? "q" : moveParts[2];
 			game.piecesOnBoard.remove((ReturnPiece)piece);
 
 			if(promotionPiece.equalsIgnoreCase("n")){
-				game.piecesOnBoard.add(new Knight(PieceType.BN, piece.getFile(), 8, chessBoard));
+				game.piecesOnBoard.add(new Knight(PieceType.BN, piece.getFile(), 1, chessBoard));
 			}
 
 			else if(promotionPiece.equalsIgnoreCase("b")){
-				game.piecesOnBoard.add(new Bishop(PieceType.BB, piece.getFile(), 8, chessBoard));
+				game.piecesOnBoard.add(new Bishop(PieceType.BB, piece.getFile(), 1, chessBoard));
 			}
 
 			else if(promotionPiece.equalsIgnoreCase("r")){
-				game.piecesOnBoard.add(new Rook(PieceType.BR, piece.getFile(), 8, chessBoard));
+				game.piecesOnBoard.add(new Rook(PieceType.BR, piece.getFile(), 1, chessBoard));
 			}
 			else{
-				game.piecesOnBoard.add(new Queen(PieceType.BQ, piece.getFile(), 8, chessBoard));
+				game.piecesOnBoard.add(new Queen(PieceType.BQ, piece.getFile(), 1, chessBoard));
 			}
 		}
 		return true;
