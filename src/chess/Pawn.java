@@ -71,6 +71,7 @@ public class Pawn extends ReturnPiece implements Piece{
         
         // Check for standard one-step forward move
         if (oldX == newX && oldY + direction == newY && isSpotEmpty(newX, newY, piecesOnBoard)) {
+            
             return true;
         }
         
@@ -105,6 +106,16 @@ public class Pawn extends ReturnPiece implements Piece{
             return oldPiece.pieceType.toString().charAt(0) == newPiece.pieceType.toString().charAt(0);
         }
         return false;
+    }
+
+    public PieceType getType()
+    {
+        return pieceType;
+    }
+
+    public PieceFile getFile()
+    {
+        return pieceFile;
     }
 
     public void move(int newX, int newY) {
