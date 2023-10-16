@@ -90,7 +90,7 @@ public class Chess {
             return game;
         }
 
-        if (piece.isLegalMove(oldFile.ordinal(), oldRank, newFile.ordinal(), newRank, game.piecesOnBoard)) {
+		if (piece.isLegalMove(oldFile.ordinal(), oldRank, newFile.ordinal(), newRank, game.piecesOnBoard)) {
             piece.move(newFile.ordinal(), newRank);
             updateGameState();
         } else {

@@ -53,13 +53,10 @@ public class Pawn extends ReturnPiece implements Piece{
     }
 
     private boolean isSameColor(int oldX, int oldY, int newX, int newY, ArrayList<ReturnPiece> piecesOnBoard) {
-        boolean isWhite = Chess.game.piecesOnBoard.get(oldX + oldY * 8).pieceType.toString().charAt(0) == 'W';
-        for (ReturnPiece piece : piecesOnBoard) {
-            int pieceX = piece.pieceFile.ordinal();
-            int pieceY = piece.pieceRank - 1;
-            if (pieceX == newX && pieceY == newY) {
-                return piece.pieceType.toString().charAt(0) == (isWhite ? 'W' : 'B');
-            }
+        ReturnPiece oldPiece = getPieceAt(oldX, oldY, piecesOnBoard);
+        ReturnPiece newPiece = getPieceAt(newX, newY, piecesOnBoard);
+        if (oldPiece != null && newPiece != null) {
+            return oldPiece.pieceType.toString().charAt(0) == newPiece.pieceType.toString().charAt(0);
         }
         return false;
     }

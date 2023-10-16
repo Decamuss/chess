@@ -16,7 +16,7 @@ public class Knight extends ReturnPiece implements Piece{
         newY -=1;
         if (!((Math.abs(oldX - newX) == 2 && Math.abs(oldY - newY) == 1) ||
               (Math.abs(oldX - newX) == 1 && Math.abs(oldY - newY) == 2))) {
-            return false;
+                return false;
         }
 
         // // Check if the destination spot is empty or contains an opponent's piece
