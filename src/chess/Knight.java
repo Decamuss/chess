@@ -65,6 +65,16 @@ public class Knight extends ReturnPiece implements Piece{
         return null;
     }
 
+    public PieceType getType()
+    {
+        return pieceType;
+    }
+
+    public PieceFile getFile()
+    {
+        return pieceFile;
+    }
+
     public void move(int newX, int newY) {
         this.pieceFile = PieceFile.values()[newX];
         this.pieceRank = newY;

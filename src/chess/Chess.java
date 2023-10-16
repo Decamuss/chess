@@ -60,34 +60,107 @@ public class Chess {
 	 */
 	public static ReturnPlay play(String move) {
 		game.message = null;
-        String[] moveParts = move.split(" ");
-        if (moveParts.length != 2) {
-            // Invalid move format
-            game.message = ReturnPlay.Message.ILLEGAL_MOVE;
-            return game;
-        }
+		List<String> listType = Arrays.asList("n", "r", "b");
+        String[] moveParts = move.split(" ", 3);
+		if (moveParts.length == 0)
+		{
+	        game.message = ReturnPlay.Message.ILLEGAL_MOVE;
+         	
+		}
+		else if(moveParts.length ==1 && moveParts[0].equalsIgnoreCase("resign"))
+		{
+				resign();
+		}
+		else if (moveParts.length ==2)
+		{
+			 move(moveParts);
+			
+		}
+		else if (moveParts.length ==3 && moveParts[2].equalsIgnoreCase("draw?"))
+		{
+			boolean valid = move(moveParts);
+			if(valid)
+			{
+				game.message = ReturnPlay.Message.DRAW;
+			}
+			
+		}
+		else if(moveParts.length ==3 && listType.contains(moveParts[2]))
+		{
+			move(moveParts);
+		}
 
+		else
+		{
+			 game.message = ReturnPlay.Message.ILLEGAL_MOVE;
+		}
+		return game;
+
+
+        // if (moveParts.length < 2) {
+        //     // Invalid move format	
+        //     game.message = ReturnPlay.Message.ILLEGAL_MOVE;
+        //     return game;		
+        // }
+
+
+		//checks to see if there is a request made by the player, and outputs the corresponding response based on said request 
+		// if(request.equalsIgnoreCase("draw")){
+		// 	 game.message = ReturnPlay.Message.DRAW;
+		// }
+		// else if(request.equalsIgnoreCase("resign"))
+		// {
+		// 	if(playerToMove == Player.white){
+		// 		game.message = ReturnPlay.Message.RESIGN_BLACK_WINS;
+		// 	}
+		// 	else{
+		// 		game.message = ReturnPlay.Message.RESIGN_WHITE_WINS;
+		// 	}
+		// }
+
+       
+	}
+
+
+	private static void resign()
+	{
+		if(playerToMove == Player.white)
+		{
+			game.message = ReturnPlay.Message.RESIGN_BLACK_WINS;
+		}
+		else if(playerToMove == Player.black)
+		{
+			game.message = ReturnPlay.Message.RESIGN_WHITE_WINS;
+		}
+	}
+
+
+
+	private static boolean move(String[] moveParts)
+	{
+		
         // Parse the source and destination squares
         String source = moveParts[0];
         String destination = moveParts[1];
+		
 
         PieceFile oldFile = PieceFile.valueOf(source.substring(0, 1));
-        int oldRank = Integer.parseInt(source.substring(1, 2));
+        int oldRank = Integer.parseInt(source.substring(1));
         PieceFile newFile = PieceFile.valueOf(destination.substring(0, 1));
-        int newRank = Integer.parseInt(destination.substring(1, 2));
+        int newRank = Integer.parseInt(destination.substring(1));
 
         ReturnPiece returnPiece = getPieceAt(oldFile, oldRank);
         if (returnPiece == null) {
             // No piece at the specified position
             game.message = ReturnPlay.Message.ILLEGAL_MOVE;
-            return game;
+            return false;
         }
 
         Piece piece = mapToDerivedPiece(returnPiece);
         if (piece == null) {
             // Unknown piece type
             game.message = ReturnPlay.Message.ILLEGAL_MOVE;
-            return game;
+            return false;
         }
 
 		if (piece.isLegalMove(oldFile.ordinal(), oldRank, newFile.ordinal(), newRank, game.piecesOnBoard)) {
@@ -95,10 +168,55 @@ public class Chess {
             updateGameState();
         } else {
             game.message = ReturnPlay.Message.ILLEGAL_MOVE;
+			return false;
         }
 
-        return game;
+		//Promotion Check
+		if(piece.getType() == ReturnPiece.PieceType.WP && newRank == 8 )
+		{
+			String promotionPiece = moveParts.length<3 ? "q" : moveParts[2];
+			game.piecesOnBoard.remove((ReturnPiece)piece);
+
+			if(promotionPiece.equalsIgnoreCase("n")){
+				game.piecesOnBoard.add(new Knight(PieceType.WN, piece.getFile(), 8));
+			}
+
+			else if(promotionPiece.equalsIgnoreCase("b")){
+				game.piecesOnBoard.add(new Bishop(PieceType.WB, piece.getFile(), 8));
+			}
+
+			else if(promotionPiece.equalsIgnoreCase("r")){
+				game.piecesOnBoard.add(new Rook(PieceType.WR, piece.getFile(), 8));
+			}
+			else{
+				game.piecesOnBoard.add(new Queen(PieceType.WQ, piece.getFile(), 8));
+			}
+		}  
+
+		else if (piece.getType() == ReturnPiece.PieceType.BP)
+		{
+			String promotionPiece = moveParts.length<3 ? "q" : moveParts[2];
+			game.piecesOnBoard.remove((ReturnPiece)piece);
+
+			if(promotionPiece.equalsIgnoreCase("n")){
+				game.piecesOnBoard.add(new Knight(PieceType.BN, piece.getFile(), 8));
+			}
+
+			else if(promotionPiece.equalsIgnoreCase("b")){
+				game.piecesOnBoard.add(new Bishop(PieceType.BB, piece.getFile(), 8));
+			}
+
+			else if(promotionPiece.equalsIgnoreCase("r")){
+				game.piecesOnBoard.add(new Rook(PieceType.BR, piece.getFile(), 8));
+			}
+			else{
+				game.piecesOnBoard.add(new Queen(PieceType.BQ, piece.getFile(), 8));
+			}
+		}
+		return true;
 	}
+
+
 
 	private static Piece mapToDerivedPiece(ReturnPiece returnPiece) {
 		switch (returnPiece.pieceType) {

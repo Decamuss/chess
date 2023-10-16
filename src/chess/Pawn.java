@@ -3,7 +3,8 @@ package chess;
 import java.util.ArrayList;
 
 public class Pawn extends ReturnPiece implements Piece{
-    public boolean hasMoved =false;
+    private boolean hasMoved = false;
+    private boolean promotionAvail = false;
 
     public Pawn(PieceType pieceType, PieceFile pieceFile, int pieceRank) {
         this.pieceType = pieceType;
@@ -12,13 +13,13 @@ public class Pawn extends ReturnPiece implements Piece{
     }
 
     public boolean isLegalMove(int oldX, int oldY, int newX, int newY, ArrayList<ReturnPiece> piecesOnBoard) {
-
         oldY -=1;
         newY -=1;
         int direction = (this.pieceType.toString().charAt(0) == 'W') ? 1 : -1;  // White pawns move up, black pawns move down
         
         // Check for standard one-step forward move
         if (oldX == newX && oldY + direction == newY && isSpotEmpty(newX, newY, piecesOnBoard)) {
+            
             return true;
         }
         
@@ -59,6 +60,16 @@ public class Pawn extends ReturnPiece implements Piece{
             return oldPiece.pieceType.toString().charAt(0) == newPiece.pieceType.toString().charAt(0);
         }
         return false;
+    }
+
+    public PieceType getType()
+    {
+        return pieceType;
+    }
+
+    public PieceFile getFile()
+    {
+        return pieceFile;
     }
 
     public void move(int newX, int newY) {
