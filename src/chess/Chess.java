@@ -47,6 +47,8 @@ public class Chess {
 	static ReturnPlay game;
 	static Player playerToMove;
 
+	private static ChessBoard chessBoard;
+
 	enum Player { white, black }
 	
 	/**
@@ -178,18 +180,18 @@ public class Chess {
 			game.piecesOnBoard.remove((ReturnPiece)piece);
 
 			if(promotionPiece.equalsIgnoreCase("n")){
-				game.piecesOnBoard.add(new Knight(PieceType.WN, piece.getFile(), 8));
+				game.piecesOnBoard.add(new Knight(PieceType.WN, piece.getFile(), 8, chessBoard));
 			}
 
 			else if(promotionPiece.equalsIgnoreCase("b")){
-				game.piecesOnBoard.add(new Bishop(PieceType.WB, piece.getFile(), 8));
+				game.piecesOnBoard.add(new Bishop(PieceType.WB, piece.getFile(), 8, chessBoard));
 			}
 
 			else if(promotionPiece.equalsIgnoreCase("r")){
-				game.piecesOnBoard.add(new Rook(PieceType.WR, piece.getFile(), 8));
+				game.piecesOnBoard.add(new Rook(PieceType.WR, piece.getFile(), 8, chessBoard));
 			}
 			else{
-				game.piecesOnBoard.add(new Queen(PieceType.WQ, piece.getFile(), 8));
+				game.piecesOnBoard.add(new Queen(PieceType.WQ, piece.getFile(), 8, chessBoard));
 			}
 		}  
 
@@ -199,18 +201,18 @@ public class Chess {
 			game.piecesOnBoard.remove((ReturnPiece)piece);
 
 			if(promotionPiece.equalsIgnoreCase("n")){
-				game.piecesOnBoard.add(new Knight(PieceType.BN, piece.getFile(), 8));
+				game.piecesOnBoard.add(new Knight(PieceType.BN, piece.getFile(), 8, chessBoard));
 			}
 
 			else if(promotionPiece.equalsIgnoreCase("b")){
-				game.piecesOnBoard.add(new Bishop(PieceType.BB, piece.getFile(), 8));
+				game.piecesOnBoard.add(new Bishop(PieceType.BB, piece.getFile(), 8, chessBoard));
 			}
 
 			else if(promotionPiece.equalsIgnoreCase("r")){
-				game.piecesOnBoard.add(new Rook(PieceType.BR, piece.getFile(), 8));
+				game.piecesOnBoard.add(new Rook(PieceType.BR, piece.getFile(), 8, chessBoard));
 			}
 			else{
-				game.piecesOnBoard.add(new Queen(PieceType.BQ, piece.getFile(), 8));
+				game.piecesOnBoard.add(new Queen(PieceType.BQ, piece.getFile(), 8, chessBoard));
 			}
 		}
 		return true;
@@ -260,7 +262,7 @@ public class Chess {
 		game = new ReturnPlay();
 		game.piecesOnBoard = new ArrayList<ReturnPiece>();
 
-		ChessBoard chessBoard = new ChessBoard();  // assuming ChessBoard has a no-argument constructor
+		chessBoard = new ChessBoard();  // assuming ChessBoard has a no-argument constructor
 
 	
 		//make pieces
