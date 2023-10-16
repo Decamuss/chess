@@ -244,7 +244,7 @@ public class Chess {
 		char opponentColor = (playerToMove == Player.white) ? 'B' : 'W';
 		if (chessBoard.isKingInCheck(game.piecesOnBoard, opponentColor)) {
 			if (chessBoard.isKingInCheckMate(game.piecesOnBoard, opponentColor)) {
-				game.message = (opponentColor == 'W') ? ReturnPlay.Message.CHECKMATE_WHITE_WINS : ReturnPlay.Message.CHECKMATE_BLACK_WINS;
+				game.message = (opponentColor == 'W') ? ReturnPlay.Message.CHECKMATE_BLACK_WINS : ReturnPlay.Message.CHECKMATE_WHITE_WINS;
 			} else {
 				game.message = ReturnPlay.Message.CHECK;
 			}
