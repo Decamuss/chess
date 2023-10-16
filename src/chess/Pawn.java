@@ -3,6 +3,7 @@ package chess;
 import java.util.ArrayList;
 
 public class Pawn extends ReturnPiece implements Piece{
+    public boolean hasMoved =false;
 
     public Pawn(PieceType pieceType, PieceFile pieceFile, int pieceRank) {
         this.pieceType = pieceType;
@@ -22,13 +23,19 @@ public class Pawn extends ReturnPiece implements Piece{
         }
         
         // Check for initial two-step forward move
-        if (oldX == newX && oldY + (2 * direction) == newY && isSpotEmpty(newX, newY, piecesOnBoard) && isSpotEmpty(newX, oldY + direction, piecesOnBoard)) {
+        if (hasMoved == false && oldX == newX && oldY + (2 * direction) == newY && isSpotEmpty(newX, newY, piecesOnBoard) && isSpotEmpty(newX, oldY + direction, piecesOnBoard)) {
+            this.hasMoved = true;
             return true;
         }
         
         // Check for diagonal capture
-        if ((oldX + 1 == newX || oldX - 1 == newX) && oldY + direction == newY && !isSpotEmpty(newX, newY, piecesOnBoard) && !isSameColor(oldX, oldY, newX, newY, piecesOnBoard)) {
+        if ((oldX + 1 == newX || oldX - 1 == newX) && oldY + direction == newY && !isSpotEmpty(newX, newY, piecesOnBoard)){
+            if(!isSameColor(oldX, oldY, newX, newY, piecesOnBoard)) {
+            ReturnPiece capturedPiece = getPieceAt(newX, newY, piecesOnBoard);
+            piecesOnBoard.remove(capturedPiece);
             return true;
+            }
+            return false;
         }
         
         return false;
@@ -60,6 +67,17 @@ public class Pawn extends ReturnPiece implements Piece{
     public void move(int newX, int newY) {
         this.pieceFile = PieceFile.values()[newX];
         this.pieceRank = newY;
+    }
+
+
+
+    private ReturnPiece getPieceAt(int x, int y, ArrayList<ReturnPiece> piecesOnBoard) {
+        for (ReturnPiece piece : piecesOnBoard) {
+            if (piece.pieceFile.ordinal() == x && piece.pieceRank == y + 1) {
+                return piece;
+            }
+        }
+        return null;
     }
 
     @Override

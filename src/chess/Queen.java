@@ -28,7 +28,18 @@ public class Queen extends ReturnPiece implements Piece{
             }
         }
 
-        return !isSameColor(oldX, oldY, newX, newY, piecesOnBoard);
+        if (!isSpotEmpty(newX, newY, piecesOnBoard)) {
+            if (!isSameColor(oldX, oldY, newX, newY, piecesOnBoard)) {
+                // Capture opponent's piece
+                ReturnPiece capturedPiece = getPieceAt(newX, newY, piecesOnBoard);
+                piecesOnBoard.remove(capturedPiece);
+                return true;
+            }
+            return false;
+        }
+        
+        return true;
+        //return !isSameColor(oldX, oldY, newX, newY, piecesOnBoard);
     }
 
     private boolean isSpotEmpty(int x, int y, ArrayList<ReturnPiece> piecesOnBoard) {

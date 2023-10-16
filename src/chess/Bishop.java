@@ -30,11 +30,32 @@ public class Bishop extends ReturnPiece implements Piece{
             }
         }
 
-        // Check if the destination spot is occupied by a piece of the same color
-        if (isSameColor(oldX, oldY, newX, newY, piecesOnBoard)) {
-            return false;
-        }
+        // // Check if the destination spot is occupied by a piece of the same color
+        // if (isSameColor(oldX, oldY, newX, newY, piecesOnBoard)) {
+        //     return false;
+        // }
 
+        // return true;
+
+        //Method for capturing piece if its opposite color
+        if (!isSpotEmpty(newX, newY, piecesOnBoard)) {
+            if (!isSameColor(oldX, oldY, newX, newY, piecesOnBoard)) {
+                // Capture opponent's piece
+                ReturnPiece capturedPiece = getPieceAt(newX, newY, piecesOnBoard);
+                piecesOnBoard.remove(capturedPiece);
+                return true;
+            }
+            return false;
+            }
+        return true;
+    }
+
+    private boolean isSpotEmpty(int x, int y, ArrayList<ReturnPiece> piecesOnBoard) {
+        for (ReturnPiece piece : piecesOnBoard) {
+            if (piece.pieceFile.ordinal() == x && piece.pieceRank == y + 1) {
+                return false;
+            }
+        }
         return true;
     }
 

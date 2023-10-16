@@ -19,10 +19,21 @@ public class Knight extends ReturnPiece implements Piece{
             return false;
         }
 
-        // Check if the destination spot is empty or contains an opponent's piece
-        if (!isSpotEmpty(newX, newY, piecesOnBoard) || isSameColor(oldX, oldY, newX, newY, piecesOnBoard)) {
+        // // Check if the destination spot is empty or contains an opponent's piece
+        // if (!isSpotEmpty(newX, newY, piecesOnBoard) || isSameColor(oldX, oldY, newX, newY, piecesOnBoard)) {
+        //     return false;
+        // }
+
+        if (!isSpotEmpty(newX, newY, piecesOnBoard)) {
+            if (!isSameColor(oldX, oldY, newX, newY, piecesOnBoard)) {
+                // Capture opponent's piece
+                ReturnPiece capturedPiece = getPieceAt(newX, newY, piecesOnBoard);
+                piecesOnBoard.remove(capturedPiece);
+                return true;
+            }
             return false;
         }
+        
 
         return true;
     }
