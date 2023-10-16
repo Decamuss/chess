@@ -141,28 +141,31 @@ public class Chess {
 		playerToMove = Player.white;
 		game = new ReturnPlay();
 		game.piecesOnBoard = new ArrayList<ReturnPiece>();
+
+		ChessBoard chessBoard = new ChessBoard();  // assuming ChessBoard has a no-argument constructor
+
 	
 		//make pieces
-		Rook whiteRook1 = new Rook(PieceType.WR, PieceFile.a, 1);
-		Rook whiteRook2 = new Rook(PieceType.WR, PieceFile.h, 1);
-		Rook blackRook1 = new Rook(PieceType.BR, PieceFile.a, 8);
-		Rook blackRook2 = new Rook(PieceType.BR, PieceFile.h, 8);
+		Rook whiteRook1 = new Rook(PieceType.WR, PieceFile.a, 1, chessBoard);
+		Rook whiteRook2 = new Rook(PieceType.WR, PieceFile.h, 1, chessBoard);
+		Rook blackRook1 = new Rook(PieceType.BR, PieceFile.a, 8, chessBoard);
+		Rook blackRook2 = new Rook(PieceType.BR, PieceFile.h, 8, chessBoard);
 
-		Knight whiteKnight1 = new Knight(PieceType.WN,PieceFile.b, 1);
-		Knight whiteKnight2 = new Knight(PieceType.WN, PieceFile.g, 1);
-		Knight blackKnight1 = new Knight(PieceType.BN, PieceFile.b, 8);
-		Knight blackKnight2 = new Knight(PieceType.BN, PieceFile.g, 8);
+		Knight whiteKnight1 = new Knight(PieceType.WN,PieceFile.b, 1, chessBoard);
+		Knight whiteKnight2 = new Knight(PieceType.WN, PieceFile.g, 1, chessBoard);
+		Knight blackKnight1 = new Knight(PieceType.BN, PieceFile.b, 8, chessBoard);
+		Knight blackKnight2 = new Knight(PieceType.BN, PieceFile.g, 8, chessBoard);
 
-		Bishop whiteBishop1 = new Bishop(PieceType.WB, PieceFile.c, 1);
-		Bishop whiteBishop2 = new Bishop(PieceType.WB, PieceFile.f, 1);
-		Bishop blackBishop1 = new Bishop(PieceType.BB, PieceFile.c, 8);
-		Bishop blackBishop2 = new Bishop(PieceType.BB, PieceFile.f, 8);
+		Bishop whiteBishop1 = new Bishop(PieceType.WB, PieceFile.c, 1, chessBoard);
+		Bishop whiteBishop2 = new Bishop(PieceType.WB, PieceFile.f, 1, chessBoard);
+		Bishop blackBishop1 = new Bishop(PieceType.BB, PieceFile.c, 8, chessBoard);
+		Bishop blackBishop2 = new Bishop(PieceType.BB, PieceFile.f, 8, chessBoard);
 
-		Queen whiteQueen = new Queen(PieceType.WQ, PieceFile.d, 1);
-		Queen blackQueen = new Queen(PieceType.BQ, PieceFile.d, 8);
+		Queen whiteQueen = new Queen(PieceType.WQ, PieceFile.d, 1, chessBoard);
+		Queen blackQueen = new Queen(PieceType.BQ, PieceFile.d, 8, chessBoard);
 
-		King whiteKing = new King(PieceType.WK, PieceFile.e, 1);
-		King blackKing = new King(PieceType.BK, PieceFile.e, 8);
+		King whiteKing = new King(PieceType.WK, PieceFile.e, 1, chessBoard);
+		King blackKing = new King(PieceType.BK, PieceFile.e, 8, chessBoard);
 
 
 		//make list for pawn add loop
@@ -172,8 +175,8 @@ public class Chess {
 		
 		for(PieceFile file: pieceFiles)
 		{
-			Pawn whitePawn = new Pawn(PieceType.WP, file, 2);
-			Pawn blackPawn = new Pawn(PieceType.BP, file, 7);
+			Pawn whitePawn = new Pawn(PieceType.WP, file, 2, chessBoard);
+			Pawn blackPawn = new Pawn(PieceType.BP, file, 7, chessBoard);
 			game.piecesOnBoard.add(whitePawn);
 			game.piecesOnBoard.add(blackPawn);
 		}
