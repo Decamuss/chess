@@ -71,7 +71,7 @@ public class Chess {
 		}
 		else if(moveParts.length ==1 && moveParts[0].equalsIgnoreCase("resign"))
 		{
-				resign();
+			resign();
 		}
 		else if (moveParts.length ==2)
 		{
@@ -118,7 +118,7 @@ public class Chess {
 
 	private static boolean move(String[] moveParts)
 	{
-		
+
         // Parse the source and destination squares
         String source = moveParts[0];
         String destination = moveParts[1];
@@ -143,9 +143,14 @@ public class Chess {
             return false;
         }
 
+		if (!isCorrectPlayerTurn(oldFile, oldRank)) {
+			game.message = ReturnPlay.Message.ILLEGAL_MOVE;
+			return false;
+		}
 		if (piece.isLegalMove(oldFile.ordinal(), oldRank, newFile.ordinal(), newRank, game.piecesOnBoard)) {
             piece.move(newFile.ordinal(), newRank);
             updateGameState();
+			switchPlayerTurn();
         } else {
             game.message = ReturnPlay.Message.ILLEGAL_MOVE;
 			return false;
@@ -196,6 +201,23 @@ public class Chess {
 		return true;
 	}
 
+	private static boolean isCorrectPlayerTurn(PieceFile file, int rank) {
+		ReturnPiece sourcePiece = getPieceAt(file,rank);
+		if (sourcePiece == null) {
+			// No piece at source, can't be the correct player's turn
+			return false;
+		}
+		
+		char currentPlayerColor = (playerToMove == Player.white) ? 'W' : 'B';
+		// Assuming the PieceType in ReturnPiece uses 'W' and 'B' prefixes to distinguish between white and black pieces
+		return sourcePiece.pieceType.name().charAt(0) == currentPlayerColor;
+	}
+	
+	
+	private static void switchPlayerTurn() {
+		playerToMove = (playerToMove == Player.white) ? Player.black : Player.white;
+	}
+
 
 
 	private static Piece mapToDerivedPiece(ReturnPiece returnPiece) {
@@ -217,10 +239,17 @@ public class Chess {
 		}
 	}
 	
-
+	
 	private static void updateGameState() {
-        // Implement game state update logic here, e.g., checking for check or checkmate
-    }
+		char opponentColor = (playerToMove == Player.white) ? 'B' : 'W';
+		if (chessBoard.isKingInCheck(game.piecesOnBoard, opponentColor)) {
+			if (chessBoard.isKingInCheckMate(game.piecesOnBoard, opponentColor)) {
+				game.message = (opponentColor == 'W') ? ReturnPlay.Message.CHECKMATE_WHITE_WINS : ReturnPlay.Message.CHECKMATE_BLACK_WINS;
+			} else {
+				game.message = ReturnPlay.Message.CHECK;
+			}
+		}
+	}
 
 	private static ReturnPiece getPieceAt(PieceFile file, int rank) {
         for (ReturnPiece piece : game.piecesOnBoard) {
@@ -231,9 +260,6 @@ public class Chess {
         return null;
     }
 	
-	/**
-	 * This method should reset the game, and start from scratch.
-	 */
 	public static void start() {
 		/* FILL IN THIS METHOD */
 		playerToMove = Player.white;

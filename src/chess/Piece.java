@@ -9,4 +9,5 @@ public interface Piece {
     void move(int x, int y);
     PieceType getType();
     PieceFile getFile();
+    int getRank();
 }

@@ -118,6 +118,11 @@ public class Pawn extends ReturnPiece implements Piece{
         return pieceFile;
     }
 
+    public int getRank()
+    {
+        return pieceRank;
+    }
+
     public void move(int newX, int newY) {
         this.pieceFile = PieceFile.values()[newX];
         this.pieceRank = newY;

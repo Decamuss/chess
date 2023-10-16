@@ -3,6 +3,7 @@ package chess;
 import java.util.ArrayList;
 import java.util.List;
 
+import chess.ReturnPiece.PieceFile;
 import chess.ReturnPiece.PieceType;
 
 public class ChessBoard {
@@ -37,23 +38,58 @@ public class ChessBoard {
                 Piece movingPiece = mapToDerivedPiece(piece);
                 if (movingPiece != null) {
                     if (movingPiece.isLegalMoveWithoutCheck(piece.pieceFile.ordinal(), piece.pieceRank, kingX, kingY, piecesOnBoard)) {
-                        System.out.println(movingPiece);
-                        System.out.println("Piece File: " + piece.pieceFile.ordinal());
-                        System.out.println("Piece Rank: " + (piece.pieceRank));
-                        System.out.println("King X: " + (kingX));
-                        System.out.println("King Y: " + (kingY));
-
-                        System.out.println("testsett");
                         return true;  // The king is in check
                     }
                 }
             }
         }
         return false;  // No piece can capture the king
+    }public boolean isKingInCheckMate(ArrayList<ReturnPiece> piecesOnBoard, char kingColor) {
+        // Iterate over all pieces of the player whose king is potentially in checkmate
+        for (ReturnPiece returnPiece : piecesOnBoard) {
+            Piece piece = mapToDerivedPiece(returnPiece);
+            
+            // If the piece isn't of the correct color, skip it
+            if (piece.getType().toString().charAt(0) != kingColor) {
+                continue;
+            }
+            
+            // Get the current position of the piece
+            int currentX = piece.getFile().ordinal();
+            int currentY = piece.getRank(); // Assuming 1-8 indexing for rank
+            
+            // Try all possible moves for the piece
+            for (int x = 0; x < 8; x++) {
+                for (int y = 1; y <= 8; y++) {  // Adjusted for 1-8 indexing for y-values
+                    // If the move is legal without considering check
+                    if (piece.isLegalMove(currentX, currentY, x, y, piecesOnBoard)) {
+                        // Save the current state of the piece
+                        PieceFile originalFile = piece.getFile();
+                        int originalRank = piece.getRank();
+    
+                        // Virtually move the piece
+                        piece.move(x, y);
+    
+                        // Check if the king would still be in check after this move
+                        boolean kingStillInCheck = isKingInCheck(piecesOnBoard, kingColor);
+    
+                        // Restore the piece's original position
+                        piece.move(originalFile.ordinal(), originalRank); // No conversion needed since rank is 1-8
+
+    
+                        // If we find any move that gets the king out of check, it's not a checkmate
+                        if (!kingStillInCheck) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+    
+        // If we've tried every possible move and the king is still in check, it's checkmate
+        return true;
     }
     
-
-
     
 private static Piece mapToDerivedPiece(ReturnPiece returnPiece) {
     switch (returnPiece.pieceType) {
@@ -75,7 +111,7 @@ private static Piece mapToDerivedPiece(ReturnPiece returnPiece) {
 }
 private ReturnPiece getPieceAt(int x, int y, ArrayList<ReturnPiece> piecesOnBoard) {
     for (ReturnPiece piece : piecesOnBoard) {
-        if (piece.pieceFile.ordinal() == x && piece.pieceRank == y + 1) {
+        if (piece.pieceFile.ordinal() == x && piece.pieceRank == y) {
             return piece;
         }
     }
