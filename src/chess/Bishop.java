@@ -19,28 +19,50 @@ public class Bishop extends ReturnPiece implements Piece{
         if (!isLegalMoveWithoutCheck(oldX, oldY, newX, newY, piecesOnBoard)) {
             return false;  // Move is not legal
         }
+        oldY -=1;
+        newY -=1;
 
         // Save the current state
         PieceFile originalFile = this.pieceFile;
         int originalRank = this.pieceRank;
-    
+        char kingColor = this.pieceType.toString().charAt(0);
+        boolean kingCurrCheck = board.isKingInCheck(piecesOnBoard, kingColor);
+
+        ReturnPiece temp = new ReturnPiece();
+        if(getPieceAt(newX, newY, piecesOnBoard) != null)
+        {
+            temp = getPieceAt(newX, newY, piecesOnBoard);
+        }
+
+        if(kingCurrCheck && temp.pieceType != null)
+        {
+            piecesOnBoard.remove(temp);  
+        }
+
         // Simulate the move
         this.pieceFile = PieceFile.values()[newX];
         this.pieceRank = newY + 1;
 
-        char kingColor = this.pieceType.toString().charAt(0);
+
         boolean kingInCheck = board.isKingInCheck(piecesOnBoard, kingColor);
 
         // Undo the simulated move
         this.pieceFile = originalFile;
         this.pieceRank = originalRank;
+        if(temp.pieceType != null && kingCurrCheck)
+        {
+           piecesOnBoard.add(temp);  
+        }
 
         // Now check if the king is in check
-        if (kingInCheck) {
+        if (kingCurrCheck && kingInCheck) {
             return false;  // Move is illegal, it puts the king in check
         }
-        oldY -=1;
-        newY -=1;
+        else if(!kingCurrCheck &&kingInCheck)
+        {
+            return false;
+        }
+
         // Method for capturing piece if its opposite color
         if (!isSpotEmpty(newX, newY, piecesOnBoard)) {
             if (!isSameColor(oldX, oldY, newX, newY, piecesOnBoard)) {
@@ -48,13 +70,14 @@ public class Bishop extends ReturnPiece implements Piece{
                 ReturnPiece capturedPiece = getPieceAt(newX, newY, piecesOnBoard);
                 if (!simulation){
                     piecesOnBoard.remove(capturedPiece);
+                    kingCurrCheck =false;
                 }
-
+                kingCurrCheck =false;
                 return true;
             }
             return false;
         }
-
+        kingCurrCheck =false;
         return true;  // Move is legal
     }
 
