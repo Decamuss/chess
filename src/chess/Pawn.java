@@ -7,6 +7,7 @@ public class Pawn extends ReturnPiece implements Piece{
 
     private ChessBoard board;
     public boolean hasMoved =false;
+    public boolean enPassantPossible = false;
 
     public Pawn(PieceType pieceType, PieceFile pieceFile, int pieceRank, ChessBoard board) {
         this.pieceType = pieceType;
@@ -71,29 +72,38 @@ public class Pawn extends ReturnPiece implements Piece{
         {
             return false;
         }
-    
-        // Check for initial two-step forward move
-        if (hasMoved == false && oldX == newX && oldY + (2 * direction) == newY && isSpotEmpty(newX, newY, piecesOnBoard) && isSpotEmpty(newX, oldY + direction, piecesOnBoard)) {
-            this.hasMoved = true;
-            kingCurrCheck = false;
-        } else if ((oldX + 1 == newX || oldX - 1 == newX) && oldY + direction == newY && !isSpotEmpty(newX, newY, piecesOnBoard) && !isSameColor(oldX, oldY, newX, newY, piecesOnBoard)) {
-            // Capture opponent's piece
-            if (!simulation){
-            ReturnPiece capturedPiece = getPieceAt(newX, newY, piecesOnBoard);
-            piecesOnBoard.remove(capturedPiece);
-            this.hasMoved = true;
-            kingCurrCheck = false;
+     // Check for initial two-step forward move
+     if (hasMoved == false && oldX == newX && oldY + (2 * direction) == newY && isSpotEmpty(newX, newY, piecesOnBoard) && isSpotEmpty(newX, oldY + direction, piecesOnBoard)) {
+        this.hasMoved = true;
+        this.enPassantPossible = true;  // Set the flag when pawn moves two squares forward.
+    } else if ((oldX + 1 == newX || oldX - 1 == newX) && oldY + direction == newY) {
+        if (!isSpotEmpty(newX, newY, piecesOnBoard)) {
+            // Standard diagonal capture
+            if (!simulation && !isSameColor(oldX, oldY, newX, newY, piecesOnBoard)) {
+                ReturnPiece capturedPiece = getPieceAt(newX, newY, piecesOnBoard);
+                piecesOnBoard.remove(capturedPiece);
             }
-            return true;
-
-        } else {
-            // If none of the above, then it's just a standard move.
             this.hasMoved = true;
-            kingCurrCheck = false;
+        } else {
+            // Potential en passant capture
+            ReturnPiece adjacentPiece = getPieceAt(newX, oldY, piecesOnBoard); // Get the pawn beside the current pawn.
+            if (adjacentPiece instanceof Pawn && adjacentPiece.pieceType.toString().charAt(0) != this.pieceType.toString().charAt(0) && ((Pawn) adjacentPiece).enPassantPossible) {
+                // Capture it via en passant
+                if (!simulation) {
+                    piecesOnBoard.remove(adjacentPiece);
+                }
+                this.hasMoved = true;
+            } else {
+                return false; // If the en passant conditions aren't met, then this move is illegal.
+            }
         }
-    
-        return true;  // Move is legal
+    } else {
+        // If none of the above, then it's just a standard move.
+        this.hasMoved = true;
     }
+
+    return true;  // Move is legal
+}
     
 
     public boolean isLegalMoveWithoutCheck(int oldX, int oldY, int newX, int newY, ArrayList<ReturnPiece> piecesOnBoard) {
@@ -115,6 +125,13 @@ public class Pawn extends ReturnPiece implements Piece{
         // Check for diagonal capture
         if ((oldX + 1 == newX || oldX - 1 == newX) && oldY + direction == newY && !isSpotEmpty(newX, newY, piecesOnBoard) && !isSameColor(oldX, oldY, newX, newY, piecesOnBoard)) {
             return true;
+        }
+
+        if (isSpotEmpty(newX, newY, piecesOnBoard) && (oldX + 1 == newX || oldX - 1 == newX) && oldY + direction == newY) {
+            ReturnPiece adjacentPiece = getPieceAt(newX, oldY, piecesOnBoard);
+            if (adjacentPiece instanceof Pawn && adjacentPiece.pieceType.toString().charAt(0) != this.pieceType.toString().charAt(0) && ((Pawn) adjacentPiece).enPassantPossible) {
+                return true;
+            }
         }
         
         return false;

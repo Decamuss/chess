@@ -154,6 +154,7 @@ public class Chess {
             piece.move(newFile.ordinal(), newRank);
             updateGameState();
 			switchPlayerTurn();
+			clearEnPassantFlags(playerToMove); // Clear the en passant flags for the next player after they make a move.
         } else {
             game.message = ReturnPlay.Message.ILLEGAL_MOVE;
 			return false;
@@ -204,6 +205,19 @@ public class Chess {
 		return true;
 	}
 
+	private static void clearEnPassantFlags(Player currentPlayer) {
+		for (ReturnPiece piece : game.piecesOnBoard) {
+			if (piece instanceof Pawn) {
+				Pawn pawn = (Pawn) piece;
+				char playerColor = (currentPlayer == Player.white) ? 'W' : 'B';
+				if (pawn.pieceType.name().charAt(0) == playerColor) {
+					pawn.enPassantPossible = false;
+				}
+			}
+		}
+	}
+
+	
 	private static boolean isCorrectPlayerTurn(PieceFile file, int rank) {
 		ReturnPiece sourcePiece = getPieceAt(file,rank);
 		if (sourcePiece == null) {
