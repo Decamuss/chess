@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Rook extends ReturnPiece implements Piece{
-
+    public boolean hasMoved = false;
     private ChessBoard board;
 
     public Rook(PieceType pieceType, PieceFile pieceFile, int pieceRank, ChessBoard board) {
@@ -51,6 +51,7 @@ public class Rook extends ReturnPiece implements Piece{
             return false;
         }
     
+        hasMoved = true;
         return true;  // Move is legal
     }
     
@@ -118,6 +119,11 @@ public class Rook extends ReturnPiece implements Piece{
     public int getRank()
     {
         return pieceRank;
+    }
+
+    public boolean getHasMoved()
+    {
+        return this.hasMoved;
     }
 
     public void move(int newX, int newY) {

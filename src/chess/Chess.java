@@ -63,7 +63,7 @@ public class Chess {
 	public static ReturnPlay play(String move) {
 		game.message = null;
 		List<String> listType = Arrays.asList("n", "r", "b");
-        String[] moveParts = move.split(" ", 3);
+        String[] moveParts = move.trim().split(" ", 3);
 		if (moveParts.length == 0)
 		{
 	        game.message = ReturnPlay.Message.ILLEGAL_MOVE;

@@ -118,6 +118,11 @@ public class Queen extends ReturnPiece implements Piece{
         return pieceRank;
     }
 
+    public boolean getHasMoved()
+    {
+        return true;
+    }
+
     public void move(int newX, int newY) {
         this.pieceFile = PieceFile.values()[newX];
         this.pieceRank = newY;

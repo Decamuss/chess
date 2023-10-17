@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class King extends ReturnPiece implements Piece {
-
+    private boolean hasMoved = false;
     private ChessBoard board;
 
     public King(PieceType pieceType, PieceFile pieceFile, int pieceRank, ChessBoard board) {
@@ -15,6 +15,11 @@ public class King extends ReturnPiece implements Piece {
     }
 
     public boolean isLegalMoveWithoutCheck(int oldX, int oldY, int newX, int newY, ArrayList<ReturnPiece> piecesOnBoard) {
+        if(!hasMoved && Math.abs(oldX - newX) == 2 &&  Math.abs(oldY - newY) == 0)
+        {
+            return true;
+        }
+
         oldY -=1;
         newY -=1;
         return (Math.abs(oldX - newX) <= 1 && Math.abs(oldY - newY) <= 1);
@@ -29,12 +34,13 @@ public class King extends ReturnPiece implements Piece {
         // Save the current state
         PieceFile originalFile = this.pieceFile;
         int originalRank = this.pieceRank;
-    
+        
+        char kingColor = this.pieceType.toString().charAt(0);
         // Simulate the move
         this.pieceFile = PieceFile.values()[newX];
         this.pieceRank = newY + 1;
 
-        char kingColor = this.pieceType.toString().charAt(0);
+        
         boolean kingInCheck = board.isKingInCheck(piecesOnBoard, kingColor);
 
         // Undo the simulated move
@@ -48,6 +54,23 @@ public class King extends ReturnPiece implements Piece {
 
         oldY -=1;
         newY -=1;
+
+        //castling logic
+        if(hasMoved == false && Math.abs(oldX - newX) == 2 &&  Math.abs(oldY - newY) == 0)
+        {
+          boolean valid = castle(newX, oldX, newY, piecesOnBoard);
+          if(!valid)
+          {
+            return false;
+          }
+          return true;
+        }
+        else if(hasMoved == true && Math.abs(oldX - newX) == 2 &&  Math.abs(oldY - newY) == 0){
+            return false;
+        }
+
+
+
         // Proceed with the capturing logic only if the king is not in check
         if (!isSpotEmpty(newX, newY, piecesOnBoard)) {
             if (!isSameColor(oldX, oldY, newX, newY, piecesOnBoard)) {
@@ -59,6 +82,7 @@ public class King extends ReturnPiece implements Piece {
             return false;
         }
 
+        hasMoved = true;
         return true;  // Move is legal
     }
 
@@ -89,6 +113,68 @@ public class King extends ReturnPiece implements Piece {
         return null;
     }
 
+    private boolean castle(int newX, int oldX, int newY, ArrayList<ReturnPiece> piecesOnBoard){
+        int middleX = (newX+oldX)/2;
+        PieceFile originalFile = this.pieceFile;
+        int originalRank = this.pieceRank;
+        
+        char kingColor = this.pieceType.toString().charAt(0);
+        boolean kingCurrCheck = board.isKingInCheck(piecesOnBoard, kingColor);
+        // Simulate the move
+        this.pieceFile = PieceFile.values()[middleX];
+        this.pieceRank = newY + 1;
+
+        
+        boolean kingMiddleCheck = board.isKingInCheck(piecesOnBoard, kingColor);
+
+        // Undo the simulated move
+        this.pieceFile = originalFile;
+        this.pieceRank = originalRank;
+
+        if(kingCurrCheck || kingMiddleCheck)
+        {
+            return false;
+        }
+
+        if(newX < oldX)
+        {
+           
+            if( !isSpotEmpty(newX, newY, piecesOnBoard) || !isSpotEmpty(newX-1, newY, piecesOnBoard) || !isSpotEmpty(newX+1, newY, piecesOnBoard))
+            {
+                return false;
+            }
+            else{
+                Piece rook = (Rook)getPieceAt(0, newY, piecesOnBoard);
+                if(rook.getHasMoved())
+                {
+                return false;
+                }
+                rook.move(newX+1, newY+1);
+                return true;
+            }
+        }
+        else if (newX > oldX)
+        {   
+            //check if pieces between rook and king are there or not
+             if( !isSpotEmpty(newX, newY, piecesOnBoard) || !isSpotEmpty(newX-1, newY, piecesOnBoard))
+            {
+                return false;
+            }
+            else{
+                //check if rook at corresponding position has moved
+                Piece rook = (Rook)getPieceAt(7, newY, piecesOnBoard);
+                if(rook.getHasMoved())
+                {
+                return false;
+                }
+                rook.move(newX-1, newY+1);
+                return true;
+            }
+        }
+
+      return false;
+    }
+
     public PieceType getType()
     {
         return pieceType;
@@ -102,6 +188,11 @@ public class King extends ReturnPiece implements Piece {
     public int getRank()
     {
         return pieceRank;
+    }
+
+    public boolean getHasMoved()
+    {
+        return this.hasMoved;
     }
 
     public void move(int newX, int newY) {
