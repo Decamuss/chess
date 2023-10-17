@@ -10,4 +10,5 @@ public interface Piece {
     PieceType getType();
     PieceFile getFile();
     int getRank();
+    boolean getHasMoved();
 }
