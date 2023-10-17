@@ -43,6 +43,9 @@ public class ChessBoard {
                 }
             }
         }
+
+
+        
         return false;  // No piece can capture the king
     }
     
@@ -60,16 +63,21 @@ public class ChessBoard {
             int currentX = piece.getFile().ordinal();
             int currentY = piece.getRank(); // Assuming 1-8 indexing for rank
             
+            
+
             // Try all possible moves for the piece
             for (int x = 0; x < 8; x++) {
                 for (int y = 1; y <= 8; y++) {  // Adjusted for 1-8 indexing for y-values
                     // If the move is legal without considering check
                     if (piece.isLegalMove(currentX, currentY, x, y, piecesOnBoard, true)) {
                         // Save the current state of the piece
+                        ReturnPiece pieceAtXY = getPieceAt(x, y, piecesOnBoard);
+
                         PieceFile originalFile = piece.getFile();
                         int originalRank = piece.getRank();
     
                         // Virtually move the piece
+                        piecesOnBoard.remove(pieceAtXY);
                         piece.move(x, y);
     
                         // Check if the king would still be in check after this move
@@ -77,8 +85,10 @@ public class ChessBoard {
     
                         // Restore the piece's original position
                         piece.move(originalFile.ordinal(), originalRank); // No conversion needed since rank is 1-8
-
-    
+                        if(pieceAtXY != null)
+                        {
+                            piecesOnBoard.add(pieceAtXY);
+                        }
                         // If we find any move that gets the king out of check, it's not a checkmate
                         if (!kingStillInCheck) {
                             return false;

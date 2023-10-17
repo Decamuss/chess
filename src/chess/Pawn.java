@@ -29,39 +29,67 @@ public class Pawn extends ReturnPiece implements Piece{
         PieceFile originalFile = this.pieceFile;
         int originalRank = this.pieceRank;
         boolean originalHasMoved = this.hasMoved;
-    
-        // Simulate the move
+        
+        char kingColor = this.pieceType.toString().charAt(0);
+        boolean kingCurrCheck = board.isKingInCheck(piecesOnBoard, kingColor);
+        
+      
+         // Simulate the move
+        ReturnPiece temp = new ReturnPiece();
+        if(getPieceAt(newX, newY, piecesOnBoard) != null)
+        {
+            temp = getPieceAt(newX, newY, piecesOnBoard);
+        }
+
+        if(kingCurrCheck && temp.pieceType != null)
+        {
+            piecesOnBoard.remove(temp);  
+        }
+ 
         this.pieceFile = PieceFile.values()[newX];
         this.pieceRank = newY + 1;
         this.hasMoved = true;
-    
-        char kingColor = this.pieceType.toString().charAt(0);
+        
+        
         boolean kingInCheck = board.isKingInCheck(piecesOnBoard, kingColor);
     
         // Undo the simulated move
         this.pieceFile = originalFile;
         this.pieceRank = originalRank;
         this.hasMoved = originalHasMoved;
+        if(temp.pieceType != null && kingCurrCheck)
+        {
+           piecesOnBoard.add(temp);  
+        }
+       
     
         // Now check if the king is in check
-        if (kingInCheck) {
+        if (kingCurrCheck && kingInCheck) {
             return false;  // Move is illegal, it puts the king in check
+        }
+        else if(!kingCurrCheck &&kingInCheck)
+        {
+            return false;
         }
     
         // Check for initial two-step forward move
         if (hasMoved == false && oldX == newX && oldY + (2 * direction) == newY && isSpotEmpty(newX, newY, piecesOnBoard) && isSpotEmpty(newX, oldY + direction, piecesOnBoard)) {
             this.hasMoved = true;
+            kingCurrCheck = false;
         } else if ((oldX + 1 == newX || oldX - 1 == newX) && oldY + direction == newY && !isSpotEmpty(newX, newY, piecesOnBoard) && !isSameColor(oldX, oldY, newX, newY, piecesOnBoard)) {
             // Capture opponent's piece
             if (!simulation){
             ReturnPiece capturedPiece = getPieceAt(newX, newY, piecesOnBoard);
             piecesOnBoard.remove(capturedPiece);
+            this.hasMoved = true;
+            kingCurrCheck = false;
             }
             return true;
 
         } else {
             // If none of the above, then it's just a standard move.
             this.hasMoved = true;
+            kingCurrCheck = false;
         }
     
         return true;  // Move is legal
