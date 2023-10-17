@@ -22,7 +22,7 @@ public class Knight extends ReturnPiece implements Piece{
                 (Math.abs(oldX - newX) == 1 && Math.abs(oldY - newY) == 2));
     }
 
-    public boolean isLegalMove(int oldX, int oldY, int newX, int newY, ArrayList<ReturnPiece> piecesOnBoard) {
+    public boolean isLegalMove(int oldX, int oldY, int newX, int newY, ArrayList<ReturnPiece> piecesOnBoard ,boolean simulation) {
         // First, let's check if the move is legal without considering the check
         if (!isLegalMoveWithoutCheck(oldX, oldY, newX, newY, piecesOnBoard)) {
             return false;  // Move is not legal
@@ -55,7 +55,9 @@ public class Knight extends ReturnPiece implements Piece{
             if (!isSameColor(oldX, oldY, newX, newY, piecesOnBoard)) {
                 // Capture opponent's piece
                 ReturnPiece capturedPiece = getPieceAt(newX, newY, piecesOnBoard);
-                piecesOnBoard.remove(capturedPiece);
+                if (!simulation){
+                    piecesOnBoard.remove(capturedPiece);
+                }
                 return true;
             }
             return false;

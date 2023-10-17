@@ -128,6 +128,7 @@ public class Chess {
         int oldRank = Integer.parseInt(source.substring(1));
         PieceFile newFile = PieceFile.valueOf(destination.substring(0, 1));
         int newRank = Integer.parseInt(destination.substring(1));
+		boolean simulation = false;
 
         ReturnPiece returnPiece = getPieceAt(oldFile, oldRank);
         if (returnPiece == null) {
@@ -147,7 +148,7 @@ public class Chess {
 			game.message = ReturnPlay.Message.ILLEGAL_MOVE;
 			return false;
 		}
-		if (piece.isLegalMove(oldFile.ordinal(), oldRank, newFile.ordinal(), newRank, game.piecesOnBoard)) {
+		if (piece.isLegalMove(oldFile.ordinal(), oldRank, newFile.ordinal(), newRank, game.piecesOnBoard, simulation)) {
             piece.move(newFile.ordinal(), newRank);
             updateGameState();
 			switchPlayerTurn();
@@ -218,7 +219,7 @@ public class Chess {
 		playerToMove = (playerToMove == Player.white) ? Player.black : Player.white;
 	}
 
-
+	
 
 	private static Piece mapToDerivedPiece(ReturnPiece returnPiece) {
 		switch (returnPiece.pieceType) {
@@ -238,13 +239,13 @@ public class Chess {
 				return null;
 		}
 	}
-	
+
 	
 	private static void updateGameState() {
 		char opponentColor = (playerToMove == Player.white) ? 'B' : 'W';
 		if (chessBoard.isKingInCheck(game.piecesOnBoard, opponentColor)) {
 			if (chessBoard.isKingInCheckMate(game.piecesOnBoard, opponentColor)) {
-				game.message = (opponentColor == 'W') ? ReturnPlay.Message.CHECKMATE_BLACK_WINS : ReturnPlay.Message.CHECKMATE_WHITE_WINS;
+				game.message = (opponentColor == 'W') ? ReturnPlay.Message.CHECKMATE_WHITE_WINS : ReturnPlay.Message.CHECKMATE_BLACK_WINS;
 			} else {
 				game.message = ReturnPlay.Message.CHECK;
 			}

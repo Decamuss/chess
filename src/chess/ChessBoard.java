@@ -44,7 +44,9 @@ public class ChessBoard {
             }
         }
         return false;  // No piece can capture the king
-    }public boolean isKingInCheckMate(ArrayList<ReturnPiece> piecesOnBoard, char kingColor) {
+    }
+    
+    public boolean isKingInCheckMate(ArrayList<ReturnPiece> piecesOnBoard, char kingColor) {
         // Iterate over all pieces of the player whose king is potentially in checkmate
         for (ReturnPiece returnPiece : piecesOnBoard) {
             Piece piece = mapToDerivedPiece(returnPiece);
@@ -62,7 +64,7 @@ public class ChessBoard {
             for (int x = 0; x < 8; x++) {
                 for (int y = 1; y <= 8; y++) {  // Adjusted for 1-8 indexing for y-values
                     // If the move is legal without considering check
-                    if (piece.isLegalMove(currentX, currentY, x, y, piecesOnBoard)) {
+                    if (piece.isLegalMove(currentX, currentY, x, y, piecesOnBoard, true)) {
                         // Save the current state of the piece
                         PieceFile originalFile = piece.getFile();
                         int originalRank = piece.getRank();
