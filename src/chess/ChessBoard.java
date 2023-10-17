@@ -69,12 +69,14 @@ public class ChessBoard {
             for (int x = 0; x < 8; x++) {
                 for (int y = 1; y <= 8; y++) {  // Adjusted for 1-8 indexing for y-values
                     // If the move is legal without considering check
+
                     if (piece.isLegalMove(currentX, currentY, x, y, piecesOnBoard, true)) {
                         // Save the current state of the piece
                         ReturnPiece pieceAtXY = getPieceAt(x, y, piecesOnBoard);
 
                         PieceFile originalFile = piece.getFile();
                         int originalRank = piece.getRank();
+                        ReturnPiece possibleCapture = getPieceAt(x, y, piecesOnBoard);  // Get the piece that might be captured
     
                         // Virtually move the piece
                         piecesOnBoard.remove(pieceAtXY);
@@ -82,6 +84,13 @@ public class ChessBoard {
     
                         // Check if the king would still be in check after this move
                         boolean kingStillInCheck = isKingInCheck(piecesOnBoard, kingColor);
+
+                        // If the move captures a piece and the king is no longer in check, then it's not checkmate
+                        if (possibleCapture != null && !kingStillInCheck) {
+                            if (doesMoveResolveCheck(currentX, currentY, x, y, piecesOnBoard, kingColor)) {
+                                return false;  // The move captures the threatening piece and resolves the check
+                            }
+                        }
     
                         // Restore the piece's original position
                         piece.move(originalFile.ordinal(), originalRank); // No conversion needed since rank is 1-8
@@ -101,26 +110,58 @@ public class ChessBoard {
         // If we've tried every possible move and the king is still in check, it's checkmate
         return true;
     }
+    private boolean doesMoveResolveCheck(int oldX, int oldY, int newX, int newY, ArrayList<ReturnPiece> piecesOnBoard, char kingColor) {
+        // Get the moving piece and the potentially captured piece
+        Piece movingPiece = mapToDerivedPiece(getPieceAt(oldX, oldY, piecesOnBoard));
+        ReturnPiece potentiallyCaptured = getPieceAt(newX, newY, piecesOnBoard);
+        
+        if (movingPiece == null) {
+            return false;  // Can't make a move if there's no piece to move
+        }
     
+        // Save the state before simulating the move
+        PieceFile originalFile = movingPiece.getFile();
+        int originalRank = movingPiece.getRank();
     
-private static Piece mapToDerivedPiece(ReturnPiece returnPiece) {
-    switch (returnPiece.pieceType) {
-        case WB: case BB:
-            return (Bishop) returnPiece;
-        case WN: case BN:
-            return (Knight) returnPiece;
-        case WR: case BR:
-            return (Rook) returnPiece;
-        case WQ: case BQ:
-            return (Queen) returnPiece;
-        case WK: case BK:
-            return (King) returnPiece;
-        case WP: case BP:
-            return (Pawn) returnPiece;
-        default:
-            return null;
+        // Virtually perform the move
+        ArrayList<ReturnPiece> virtualBoard = new ArrayList<>(piecesOnBoard); // Create a copy of the board to simulate the move
+        if (potentiallyCaptured != null) {
+            virtualBoard.remove(potentiallyCaptured);
+        }
+        movingPiece.move(newX, newY);
+    
+        // Check if this move resolves the check
+        boolean kingStillInCheck = isKingInCheck(virtualBoard, kingColor);
+    
+        // Restore the moving piece's state
+        movingPiece.move(originalFile.ordinal(), originalRank);
+    
+        // If the king is not in check after the move, then this move does resolve the check
+        return !kingStillInCheck;
     }
-}
+    
+    private static Piece mapToDerivedPiece(ReturnPiece returnPiece) {
+        if(returnPiece == null) {
+            return null;  // or throw a custom exception if you prefer
+        }
+        
+        switch (returnPiece.pieceType) {
+            case WB: case BB:
+                return (Bishop) returnPiece;
+            case WN: case BN:
+                return (Knight) returnPiece;
+            case WR: case BR:
+                return (Rook) returnPiece;
+            case WQ: case BQ:
+                return (Queen) returnPiece;
+            case WK: case BK:
+                return (King) returnPiece;
+            case WP: case BP:
+                return (Pawn) returnPiece;
+            default:
+                return null;
+        }
+    }
 private ReturnPiece getPieceAt(int x, int y, ArrayList<ReturnPiece> piecesOnBoard) {
     for (ReturnPiece piece : piecesOnBoard) {
         if (piece.pieceFile.ordinal() == x && piece.pieceRank == y) {
