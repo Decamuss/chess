@@ -74,7 +74,11 @@ public class Pawn extends ReturnPiece implements Piece{
     
         // Check for initial two-step forward move
         if (hasMoved == false && oldX == newX && oldY + (2 * direction) == newY && isSpotEmpty(newX, newY, piecesOnBoard) && isSpotEmpty(newX, oldY + direction, piecesOnBoard)) {
-            this.hasMoved = true;
+            if(!simulation)
+            {
+                this.hasMoved = true;
+            }
+            
             kingCurrCheck = false;
         } else if ((oldX + 1 == newX || oldX - 1 == newX) && oldY + direction == newY && !isSpotEmpty(newX, newY, piecesOnBoard) && !isSameColor(oldX, oldY, newX, newY, piecesOnBoard)) {
             // Capture opponent's piece
@@ -88,7 +92,11 @@ public class Pawn extends ReturnPiece implements Piece{
 
         } else {
             // If none of the above, then it's just a standard move.
-            this.hasMoved = true;
+            //this.hasMoved = true;
+            if(!simulation)
+            {
+                this.hasMoved = true;
+            }
             kingCurrCheck = false;
         }
     

@@ -31,11 +31,28 @@ public class King extends ReturnPiece implements Piece {
             return false;  // Move is not legal
         }
 
+        oldY -=1;
+        newY -=1;
+
         // Save the current state
         PieceFile originalFile = this.pieceFile;
         int originalRank = this.pieceRank;
         
         char kingColor = this.pieceType.toString().charAt(0);
+        boolean kingCurrCheck = board.isKingInCheck(piecesOnBoard, kingColor);
+
+        ReturnPiece temp = new ReturnPiece();
+        if(getPieceAt(newX, newY, piecesOnBoard) != null)
+        {
+            temp = getPieceAt(newX, newY, piecesOnBoard);
+        }
+
+        if(kingCurrCheck && temp.pieceType != null)
+        {
+            piecesOnBoard.remove(temp);  
+        }
+
+
         // Simulate the move
         this.pieceFile = PieceFile.values()[newX];
         this.pieceRank = newY + 1;
@@ -47,13 +64,20 @@ public class King extends ReturnPiece implements Piece {
         this.pieceFile = originalFile;
         this.pieceRank = originalRank;
 
-        // Now check if the king is in check
-        if (kingInCheck) {
-            return false;  // Move is illegal, it puts the king in check
+        if(temp.pieceType != null && kingCurrCheck)
+        {
+           piecesOnBoard.add(temp);  
         }
 
-        oldY -=1;
-        newY -=1;
+
+        // Now check if the king is in check
+        if (kingCurrCheck && kingInCheck) {
+            return false;  // Move is illegal, it puts the king in check
+        }
+        else if(!kingCurrCheck &&kingInCheck)
+        {
+            return false;
+        }
 
         //castling logic
         if(hasMoved == false && Math.abs(oldX - newX) == 2 &&  Math.abs(oldY - newY) == 0)
@@ -79,12 +103,17 @@ public class King extends ReturnPiece implements Piece {
                 if (!simulation){
                     piecesOnBoard.remove(capturedPiece);
                 }
+                kingCurrCheck =false;
                 return true;
             }
             return false;
         }
-
-        hasMoved = true;
+        if(!simulation)
+        {
+           hasMoved = true; 
+        }
+        
+        kingCurrCheck =false;
         return true;  // Move is legal
     }
 
